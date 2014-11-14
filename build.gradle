@@ -1,0 +1,83 @@
+buildscript {
+    ext {
+        springBootVersion = '1.1.6.RELEASE'
+    }
+    repositories {
+        maven { url "http://repo.spring.io/libs-release" }
+        maven { url "http://repo.spring.io/libs-snapshot" }
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+
+compileJava {
+    targetCompatibility = 1.8
+}
+
+applicationDefaultJvmArgs = [
+        "-Dkeystore.file=src/main/resources/private/keystorejks", "-Dkeystore.pass=password"
+]
+
+mainClassName = "com.futureprocessing.spring.Application"
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.spring.io/libs-release" }
+    maven { url "http://repo.spring.io/libs-snapshot" }
+    maven { url "http://maven.springframework.org/milestone" }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'org.slf4j:jcl-over-slf4j:1.7.7'
+    compile 'ch.qos.logback:logback-core:1.1.2'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-tomcat'
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-aop'
+
+    compile 'commons-codec:commons-codec:1.4'
+    compile('commons-httpclient:commons-httpclient:3.1') {
+        exclude group: 'commons-logging'
+    }
+    compile 'commons-io:commons-io:2.4'
+
+    compile 'org.apache.httpcomponents:httpclient:4.3.4'
+    compile 'org.apache.httpcomponents:httpcore:4.0.1'
+
+    compile 'com.google.guava:guava:17.0'
+    compile 'joda-time:joda-time:2.4'
+    compile('net.sf.ehcache:ehcache-core:2.6.9') {
+        exclude group: 'commons-logging'
+    }
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'junit:junit'
+    testCompile 'org.assertj:assertj-core:1.7.0'
+    testCompile 'org.mockito:mockito-core:1.10.8'
+    testCompile 'com.jayway.restassured:rest-assured:2.3.4'
+}
+
+jar {
+    baseName = 'springsecuritytest'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}

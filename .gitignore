@@ -1,0 +1,8 @@
+.classpath
+.gradle/
+.project
+.settings/
+bin/
+build/
+.idea/workspace.xml
+**/*.log
