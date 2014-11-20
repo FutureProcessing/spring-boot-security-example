@@ -1,6 +1,6 @@
 package com.futureprocessing.spring.infrastructure.security;
 
-public interface ExternalServiceAuthenticationProvider {
+public interface ExternalServiceAuthenticator {
 
     AuthenticationWithToken authenticate(String username, String password);
 }

@@ -1,8 +1,8 @@
 package com.futureprocessing.spring.infrastructure;
 
+import com.futureprocessing.spring.api.samplestuff.ServiceGateway;
 import com.futureprocessing.spring.domain.DomainUser;
 import com.futureprocessing.spring.domain.Stuff;
-import com.futureprocessing.spring.infrastructure.externalwebservice.AuthenticatedExternalServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

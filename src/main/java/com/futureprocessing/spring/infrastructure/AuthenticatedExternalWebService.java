@@ -1,5 +1,6 @@
-package com.futureprocessing.spring.infrastructure.externalwebservice;
+package com.futureprocessing.spring.infrastructure;
 
+import com.futureprocessing.spring.infrastructure.externalwebservice.ExternalWebServiceStub;
 import com.futureprocessing.spring.infrastructure.security.AuthenticationWithToken;
 import org.springframework.security.core.GrantedAuthority;
 

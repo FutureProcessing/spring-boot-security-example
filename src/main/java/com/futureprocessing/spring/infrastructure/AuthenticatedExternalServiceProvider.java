@@ -1,5 +1,6 @@
-package com.futureprocessing.spring.infrastructure.externalwebservice;
+package com.futureprocessing.spring.infrastructure;
 
+import com.futureprocessing.spring.infrastructure.AuthenticatedExternalWebService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 

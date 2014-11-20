@@ -1,7 +1,7 @@
 package com.futureprocessing.spring.infrastructure.security;
 
 import com.futureprocessing.spring.api.ApiController;
-import com.futureprocessing.spring.infrastructure.externalwebservice.SomeExternalServiceAuthenticationProvider;
+import com.futureprocessing.spring.infrastructure.externalwebservice.SomeExternalServiceAuthenticator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,19 +50,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ApiController.METRICS_ENDPOINT, ApiController.SHUTDOWN_ENDPOINT};
     }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(domainUsernamePasswordAuthenticationProvider()).
+                authenticationProvider(backendAdminUsernamePasswordAuthenticationProvider()).
+                authenticationProvider(tokenAuthenticationProvider());
+    }
+
     @Bean
     public TokenService tokenService() {
         return new TokenService();
     }
 
     @Bean
-    public ExternalServiceAuthenticationProvider someExternalServiceAuthenticationProvider() {
-        return new SomeExternalServiceAuthenticationProvider();
+    public ExternalServiceAuthenticator someExternalServiceAuthenticator() {
+        return new SomeExternalServiceAuthenticator();
     }
 
     @Bean
     public AuthenticationProvider domainUsernamePasswordAuthenticationProvider() {
-        return new DomainUsernamePasswordAuthenticationProvider(tokenService(), someExternalServiceAuthenticationProvider());
+        return new DomainUsernamePasswordAuthenticationProvider(tokenService(), someExternalServiceAuthenticator());
     }
 
     @Bean
@@ -78,12 +85,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationEntryPoint unauthorizedEntryPoint() {
         return (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(domainUsernamePasswordAuthenticationProvider()).
-                authenticationProvider(backendAdminUsernamePasswordAuthenticationProvider()).
-                authenticationProvider(tokenAuthenticationProvider());
     }
 }

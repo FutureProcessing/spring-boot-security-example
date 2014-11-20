@@ -1,10 +1,11 @@
 package com.futureprocessing.spring.infrastructure.externalwebservice;
 
 import com.futureprocessing.spring.domain.DomainUser;
-import com.futureprocessing.spring.infrastructure.security.ExternalServiceAuthenticationProvider;
+import com.futureprocessing.spring.infrastructure.AuthenticatedExternalWebService;
+import com.futureprocessing.spring.infrastructure.security.ExternalServiceAuthenticator;
 import org.springframework.security.core.authority.AuthorityUtils;
 
-public class SomeExternalServiceAuthenticationProvider implements ExternalServiceAuthenticationProvider {
+public class SomeExternalServiceAuthenticator implements ExternalServiceAuthenticator {
 
     @Override
     public AuthenticatedExternalWebService authenticate(String username, String password) {

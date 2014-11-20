@@ -2,9 +2,9 @@ package com.futureprocessing.integration;
 
 import com.futureprocessing.spring.Application;
 import com.futureprocessing.spring.api.ApiController;
-import com.futureprocessing.spring.infrastructure.ServiceGateway;
-import com.futureprocessing.spring.infrastructure.externalwebservice.AuthenticatedExternalWebService;
-import com.futureprocessing.spring.infrastructure.security.ExternalServiceAuthenticationProvider;
+import com.futureprocessing.spring.api.samplestuff.ServiceGateway;
+import com.futureprocessing.spring.infrastructure.AuthenticatedExternalWebService;
+import com.futureprocessing.spring.infrastructure.security.ExternalServiceAuthenticator;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.ValidatableResponse;
 import org.junit.Before;
@@ -51,13 +51,13 @@ public class SecurityTest {
     String keystorePass;
 
     @Autowired
-    ExternalServiceAuthenticationProvider mockedExternalServiceAuthenticationProvider;
+    ExternalServiceAuthenticator mockedExternalServiceAuthenticator;
 
     @Configuration
     public static class SecurityTestConfig {
         @Bean
-        public ExternalServiceAuthenticationProvider someExternalServiceAuthenticationProvider() {
-            return mock(ExternalServiceAuthenticationProvider.class);
+        public ExternalServiceAuthenticator someExternalServiceAuthenticator() {
+            return mock(ExternalServiceAuthenticator.class);
         }
 
         @Bean
@@ -71,7 +71,7 @@ public class SecurityTest {
         RestAssured.baseURI = "https://localhost";
         RestAssured.keystore(keystoreFile, keystorePass);
         RestAssured.port = port;
-        Mockito.reset(mockedExternalServiceAuthenticationProvider);
+        Mockito.reset(mockedExternalServiceAuthenticator);
     }
 
     @Test
@@ -110,7 +110,7 @@ public class SecurityTest {
                 when().post(ApiController.AUTHENTICATE_URL).
                 then().statusCode(HttpStatus.UNAUTHORIZED.value());
 
-        BDDMockito.verifyNoMoreInteractions(mockedExternalServiceAuthenticationProvider);
+        BDDMockito.verifyNoMoreInteractions(mockedExternalServiceAuthenticator);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class SecurityTest {
                 when().post(ApiController.AUTHENTICATE_URL).
                 then().statusCode(HttpStatus.UNAUTHORIZED.value());
 
-        BDDMockito.verifyNoMoreInteractions(mockedExternalServiceAuthenticationProvider);
+        BDDMockito.verifyNoMoreInteractions(mockedExternalServiceAuthenticator);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class SecurityTest {
         when().post(ApiController.AUTHENTICATE_URL).
                 then().statusCode(HttpStatus.UNAUTHORIZED.value());
 
-        BDDMockito.verifyNoMoreInteractions(mockedExternalServiceAuthenticationProvider);
+        BDDMockito.verifyNoMoreInteractions(mockedExternalServiceAuthenticator);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class SecurityTest {
         String username = "test_user_2";
         String password = "InvalidPassword";
 
-        BDDMockito.when(mockedExternalServiceAuthenticationProvider.authenticate(anyString(), anyString())).
+        BDDMockito.when(mockedExternalServiceAuthenticator.authenticate(anyString(), anyString())).
                 thenThrow(new BadCredentialsException("Invalid Credentials"));
 
         given().header(X_AUTH_USERNAME, username).header(X_AUTH_PASSWORD, password).
@@ -176,7 +176,7 @@ public class SecurityTest {
 
         AuthenticatedExternalWebService authenticationWithToken = new AuthenticatedExternalWebService(username, null,
                 AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_DOMAIN_USER"));
-        BDDMockito.when(mockedExternalServiceAuthenticationProvider.authenticate(eq(username), eq(password))).
+        BDDMockito.when(mockedExternalServiceAuthenticator.authenticate(eq(username), eq(password))).
                 thenReturn(authenticationWithToken);
 
         ValidatableResponse validatableResponse = given().header(X_AUTH_USERNAME, username).

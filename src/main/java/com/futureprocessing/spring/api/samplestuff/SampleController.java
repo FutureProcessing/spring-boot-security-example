@@ -4,7 +4,6 @@ import com.futureprocessing.spring.api.ApiController;
 import com.futureprocessing.spring.domain.CurrentlyLoggedUser;
 import com.futureprocessing.spring.domain.DomainUser;
 import com.futureprocessing.spring.domain.Stuff;
-import com.futureprocessing.spring.infrastructure.ServiceGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
