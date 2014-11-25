@@ -18,6 +18,7 @@ import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -53,6 +54,9 @@ public class SecurityTest {
     @Autowired
     ExternalServiceAuthenticator mockedExternalServiceAuthenticator;
 
+    @Autowired
+    ServiceGateway mockedServiceGateway;
+
     @Configuration
     public static class SecurityTestConfig {
         @Bean
@@ -61,6 +65,7 @@ public class SecurityTest {
         }
 
         @Bean
+        @Primary
         public ServiceGateway serviceGateway() {
             return mock(ServiceGateway.class);
         }
@@ -71,7 +76,7 @@ public class SecurityTest {
         RestAssured.baseURI = "https://localhost";
         RestAssured.keystore(keystoreFile, keystorePass);
         RestAssured.port = port;
-        Mockito.reset(mockedExternalServiceAuthenticator);
+        Mockito.reset(mockedExternalServiceAuthenticator, mockedServiceGateway);
     }
 
     @Test
