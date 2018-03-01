@@ -1,10 +1,11 @@
 package com.futureprocessing.spring.infrastructure.security;
 
-import com.futureprocessing.spring.api.ApiController;
 import com.futureprocessing.spring.infrastructure.externalwebservice.SomeExternalServiceAuthenticator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 @EnableScheduling
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Order(ManagementServerProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${backend.admin.role}")
@@ -34,7 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
                 and().
                 authorizeRequests().
-                antMatchers(actuatorEndpoints()).hasRole(backendAdminRole).
                 anyRequest().authenticated().
                 and().
                 anonymous().disable().
@@ -42,12 +43,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class).
                 addFilterBefore(new ManagementEndpointAuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class);
-    }
-
-    private String[] actuatorEndpoints() {
-        return new String[]{ApiController.AUTOCONFIG_ENDPOINT, ApiController.BEANS_ENDPOINT, ApiController.CONFIGPROPS_ENDPOINT,
-                ApiController.ENV_ENDPOINT, ApiController.MAPPINGS_ENDPOINT,
-                ApiController.METRICS_ENDPOINT, ApiController.SHUTDOWN_ENDPOINT};
     }
 
     @Override
