@@ -6,3 +6,5 @@ bin/
 build/
 .idea/workspace.xml
 **/*.log
+.idea
+out/

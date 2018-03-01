@@ -14,28 +14,22 @@ import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {Application.class, SecurityTest.SecurityTestConfig.class})
-@WebAppConfiguration
-@IntegrationTest("server.port:0")
+@SpringBootTest(classes = {Application.class, SecurityTest.SecurityTestConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SecurityTest {
 
     private static final String X_AUTH_USERNAME = "X-Auth-Username";
@@ -76,13 +70,14 @@ public class SecurityTest {
         RestAssured.baseURI = "https://localhost";
         RestAssured.keystore(keystoreFile, keystorePass);
         RestAssured.port = port;
+        RestAssured.useRelaxedHTTPSValidation();
         Mockito.reset(mockedExternalServiceAuthenticator, mockedServiceGateway);
     }
 
     @Test
-    public void healthEndpoint_isAvailableToEveryone() {
+    public void healthEndpoint_withoutBackendAdminCredentials_returnsUnauthorized() {
         when().get("/health").
-                then().statusCode(HttpStatus.OK.value()).body("status", equalTo("UP"));
+                then().statusCode(HttpStatus.UNAUTHORIZED.value());
     }
 
     @Test
